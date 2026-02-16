@@ -67,7 +67,7 @@ async def satpam_otomatis():
             kirim_discord("CPU ALERT", f"CPU Load: {cpu}%", 15548997)
             await asyncio.sleep(300)
             
-        if battery is not None and battery.percent > 50:
+        if battery is not None and battery.percent < 40:
             kirim_discord("BATTERY ALERT", f"Battery Percent: {battery.percent}%", 15548997)
             await asyncio.sleep(300)
 
