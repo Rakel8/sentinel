@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Sentinel Command Center</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="shortcut icon" href="img/blue_world.ico" type="image/x-icon" />
+  </head>
+  <body>
+    <center>
+      <h1>🚀 SENTINEL COMMAND CENTER</h1>
+      <p>Real-time Telemetry System</p>
+    </center>
+    <br />
+
+    <div class="dashboard-grid">
+      <div class="chart-box box-cpu">
+        <h2>CPU LOAD</h2>
+        <canvas id="cpuChart"></canvas>
+      </div>
+
+      <div class="chart-box box-ram">
+        <h2>RAM USAGE</h2>
+        <canvas id="ramChart"></canvas>
+      </div>
+
+      <div class="chart-box box-bat">
+        <h2>BATTERY LEVEL</h2>
+        <canvas id="batChart"></canvas>
+      </div>
+    </div>
+
+    <br /><br />
+    <div class="button-box">
+      <button onclick="tidurkanLaptop()">💤 SLEEP MODE</button>
+      <button onclick="matikanLaptop()">SHUTDOWN!!!!</button>
+    </div>
+
+    <script src="js/script.js"></script>
+  </body>
+</html>

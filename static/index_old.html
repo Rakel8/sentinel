@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Sentinel Dashboard</title>
+    <style></style>
+  </head>
+  <body>
+    <div class="box">
+      <p>CPU LOAD</p>
+      <h1 id="cpu-angka">0%</h1>
+    </div>
+    <div class="box">
+      <p>RAM USAGE</p>
+      <h1 id="ram-angka">0%</h1>
+    </div>
+    <div class="box">
+      <p>BATTERY</p>
+      <h1 id="battery-angka">0%</h1>
+    </div>
+
+    <br /><br />
+    <center>
+      <button
+        onclick="matikanLaptop()"
+        style="
+          background-color: red;
+          color: white;
+          font-size: 24px;
+          padding: 15px 30px;
+          border: none;
+          border-radius: 10px;
+          cursor: pointer;
+          box-shadow: 0 0 15px red;
+          font-weight: bold;
+        "
+      >
+        💤 SLEEP MODE
+      </button>
+    </center>
+
+    <script>
+      // Fungsi untuk mengambil data
+      async function updateDashboard() {
+        try {
+          // 1. Panggil API Backend (Rute yang kamu bikin tadi)
+          let responseCpu = await fetch("/monitor/cpu");
+          let responseRam = await fetch("/monitor/ram");
+          let responseBattery = await fetch("/monitor/battery");
+
+          // 2. Baca jawabannya sebagai JSON
+          let dataCpu = await responseCpu.json();
+          let dataRam = await responseRam.json();
+          let dataBattery = await responseBattery.json();
+
+          // 3. Cari elemen HTML dengan ID 'cpu-angka'
+          let elemenAngkaCpu = document.getElementById("cpu-angka");
+          let elemenAngkaRam = document.getElementById("ram-angka");
+          let elemenAngkaBattery = document.getElementById("battery-angka");
+
+          // 4. Ubah tulisannya dengan data dari JSON
+          // Ingat: format JSON kamu tadi {"CPU": "15.5%"}
+          elemenAngkaCpu.innerText = dataCpu.CPU;
+          elemenAngkaRam.innerText = dataRam.RAM;
+          elemenAngkaBattery.innerText = dataBattery.Battery;
+
+          // --- LOGIKA WARNA BARU (Warning System) ---
+
+          // A. Bersihkan simbol "%" dan ubah jadi Angka Murni
+          // "15.5%" -> jadi angka 15.5
+          let nilaiCpu = parseFloat(dataCpu.CPU);
+
+          // B. Cek Kondisi
+          if (nilaiCpu > 80) {
+            // BAHAYA! Ubah jadi Merah
+            elemenAngkaCpu.style.color = "red";
+            // Opsional: Tambah efek bayangan merah biar serem
+            elemenAngkaCpu.style.textShadow = "0 0 20px red";
+          } else if (nilaiCpu > 50) {
+            // Waspada (Kuning)
+            elemenAngkaCpu.style.color = "yellow";
+            elemenAngkaCpu.style.textShadow = "none";
+          } else {
+            // Aman (Hijau/Putih)
+            elemenAngkaCpu.style.color = "#00ff00"; // Hijau Hacker
+            elemenAngkaCpu.style.textShadow = "none";
+          }
+
+          // ... Ulangi logika yang sama untuk RAM & Baterai kalau mau ...
+
+          let nilaiBattery = parseFloat(dataBattery.Battery);
+
+          if (nilaiBattery > 80) {
+            elemenAngkaBattery.style.color = "#00ff00";
+            elemenAngkaBattery.style.textShadow = "0 0 20px #00ff00";
+          } else if (nilaiBattery > 50) {
+            elemenAngkaCpu.style.color = "yellow";
+            elemenAngkaCpu.style.textShadow = "none";
+          } else {
+            elemenAngkaCpu.style.color = "red";
+            elemenAngkaCpu.style.textShadow = "none";
+          }
+        } catch (error) {
+          console.log("Gagal mengambil data:", error);
+        }
+      }
+
+      // FUNGSI BARU: COMMANDER
+      async function matikanLaptop() {
+        let yakin = confirm("Yakin mau tidurkan laptop?");
+
+        if (yakin) {
+          // Tampilkan pesan DULUAN sebelum kirim perintah
+          alert("Mengirim perintah tidur... Goodnight! 💤");
+
+          // Hapus 'await'. Kita kirim lalu lupakan (Fire and Forget).
+          // Kalau error (catch), kita biarkan saja (karena memang pasti putus koneksinya)
+          fetch("/action/sleep").catch((err) =>
+            console.log("Koneksi terputus (Normal saat sleep)"),
+          );
+        }
+      }
+
+      // Jalankan fungsi updateDashboard setiap 1000 milidetik (1 detik)
+      setInterval(updateDashboard, 1000);
+    </script>
+  </body>
+</html>
