@@ -8,7 +8,7 @@
   </head>
   <body>
     <center>
-      <h1>🚀 SENTINEL COMMAND CENTER</h1>
+      <h1>SENTINEL COMMAND CENTER</h1>
       <p>Real-time Telemetry System</p>
     </center>
     <br />
@@ -16,23 +16,26 @@
     <div class="dashboard-grid">
       <div class="chart-box box-cpu">
         <h2>CPU LOAD</h2>
+        <h1 id="cpu-text" class="realtime-text cpu-color">--%</h1>
         <canvas id="cpuChart"></canvas>
       </div>
 
       <div class="chart-box box-ram">
         <h2>RAM USAGE</h2>
+        <h1 id="ram-text" class="realtime-text ram-color">--%</h1>
         <canvas id="ramChart"></canvas>
       </div>
 
       <div class="chart-box box-bat">
         <h2>BATTERY LEVEL</h2>
+        <h1 id="bat-text" class="realtime-text bat-color">--%</h1>
         <canvas id="batChart"></canvas>
       </div>
     </div>
 
     <br /><br />
     <div class="button-box">
-      <button onclick="tidurkanLaptop()">💤 SLEEP MODE</button>
+      <button onclick="tidurkanLaptop()">SLEEP MODE</button>
       <button onclick="matikanLaptop()">SHUTDOWN!!!!</button>
     </div>
 

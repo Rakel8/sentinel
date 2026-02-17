@@ -11,7 +11,7 @@ function buatGrafik(idCanvas, label, warna) {
           borderColor: warna,
           backgroundColor: warna + "33",
           borderWidth: 2,
-          tension: 0,
+          tension: 0.2, // Sedikit dilengkungkan biar elegan
           pointRadius: 0,
           fill: true,
         },
@@ -34,7 +34,6 @@ const chartBAT = buatGrafik("batChart", "Battery %", "#ffaa00");
 
 function updateSatuGrafik(chart, labelWaktu, dataString) {
   let nilai = parseFloat(dataString);
-
   chart.data.labels.push(labelWaktu);
   chart.data.datasets[0].data.push(nilai);
 
@@ -53,10 +52,8 @@ async function muatSejarah() {
     dataSejarah.forEach((item) => {
       chartCPU.data.labels.push(item.waktu);
       chartCPU.data.datasets[0].data.push(item.cpu);
-
       chartRAM.data.labels.push(item.waktu);
       chartRAM.data.datasets[0].data.push(item.ram);
-
       chartBAT.data.labels.push(item.waktu);
       chartBAT.data.datasets[0].data.push(item.baterai);
     });
@@ -64,7 +61,6 @@ async function muatSejarah() {
     chartCPU.update();
     chartRAM.update();
     chartBAT.update();
-    console.log("✅ Sejarah berhasil dimuat dari Database!");
   } catch (error) {
     console.error("Gagal memuat sejarah:", error);
   }
@@ -74,17 +70,23 @@ async function updateDashboard() {
   try {
     let waktu = new Date().toLocaleTimeString();
 
+    // 1. Fetch & Update CPU
     let resCpu = await fetch("/monitor/cpu");
     let jsonCpu = await resCpu.json();
     updateSatuGrafik(chartCPU, waktu, jsonCpu.CPU);
+    document.getElementById("cpu-text").innerText = jsonCpu.CPU + "%"; // <--- INJEKSI ANGKA HTML
 
+    // 2. Fetch & Update RAM
     let resRam = await fetch("/monitor/ram");
     let jsonRam = await resRam.json();
     updateSatuGrafik(chartRAM, waktu, jsonRam.RAM);
+    document.getElementById("ram-text").innerText = jsonRam.RAM + "%"; // <--- INJEKSI ANGKA HTML
 
+    // 3. Fetch & Update Baterai
     let resBat = await fetch("/monitor/battery");
     let jsonBat = await resBat.json();
     updateSatuGrafik(chartBAT, waktu, jsonBat.Battery);
+    document.getElementById("bat-text").innerText = jsonBat.Battery + "%"; // <--- INJEKSI ANGKA HTML
   } catch (err) {
     console.log("Error fetch data:", err);
   }
@@ -92,7 +94,7 @@ async function updateDashboard() {
 
 async function tidurkanLaptop() {
   if (confirm("Yakin mau tidur?")) {
-    alert("Goodnight! 💤");
+    alert("Goodnight!");
     fetch("/action/sleep").catch((e) => console.log("Offline."));
   }
 }
@@ -104,6 +106,7 @@ async function matikanLaptop() {
   }
 }
 
+// Mulai mesinnya
 muatSejarah().then(() => {
   setInterval(updateDashboard, 1000);
 });
